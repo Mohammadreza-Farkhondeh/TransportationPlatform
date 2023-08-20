@@ -4,4 +4,12 @@ env
 .venv
 .env
 
+# python cache
+**__pycache__/
+
+# Django migrations
+**000**
+
+# sqlite 
+db.sqlite3
 

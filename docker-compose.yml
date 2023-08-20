@@ -13,6 +13,18 @@ services:
     networks:
       - transportation-net
 
+  interaction-service:
+    build:
+      context: ./backend/interactions
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgres://username:password@postgres/dbname
+    depends_on:
+      - postgres
+    networks:
+      - transportation-net
+  
   location-service:
     build:
       context: ./backend/locations
