@@ -25,9 +25,11 @@ def get_current_user_id(user_id: str = Depends(get_user_id)):
 
 
 def get_ride_id_by_user(db: Session, user_id: int):
-    ride = db.query(Ride).filter(
-        (Ride.passenger_id == user_id) | (Ride.driver_id == user_id)
-        ).first()
+    ride = (
+        db.query(Ride)
+        .filter((Ride.passenger_id == user_id) | (Ride.driver_id == user_id))
+        .first()
+    )
 
     if ride:
         return ride.id

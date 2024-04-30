@@ -2,6 +2,7 @@ from typing import Optional
 from pydantic import BaseModel
 from datetime import datetime
 
+
 class RideBase(BaseModel):
     origin_lat: float
     origin_lon: float

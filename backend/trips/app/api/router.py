@@ -28,7 +28,7 @@ async def create_ride(
 async def accept_ride(
     ride_id: int,
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user_id)
+    user_id: str = Depends(get_current_user_id),
 ):
     # Check if the user is a driver (You might need to implement this check)
     if not is_user_driver(user_id):  # Implement this function to check user's role
@@ -48,13 +48,16 @@ async def accept_ride(
 
 @router.put("/rides/{ride_id}", response_model=Ride)
 async def update_ride(
-    ride_id: int, ride_in: RideUpdate,
+    ride_id: int,
+    ride_in: RideUpdate,
     db: Session = Depends(get_db),
-    user_id: str = Depends(get_current_user_id)
+    user_id: str = Depends(get_current_user_id),
 ):
     active_ride_id = get_ride_id_by_user(db, user_id)
     if active_ride_id != ride_id:
-        raise HTTPException(status_code=403, detail="You can only update your active ride")
+        raise HTTPException(
+            status_code=403, detail="You can only update your active ride"
+        )
 
     ride = ride_crud.get(db, id=ride_id)
     if ride is None:
@@ -72,11 +75,13 @@ async def update_ride(
 async def cancel_ride(
     ride_id: int,
     user_id: str = Depends(get_current_user_id),
-    db: Session = Depends(get_db)
+    db: Session = Depends(get_db),
 ):
     active_ride_id = get_ride_id_by_user(db, user_id)
     if active_ride_id != ride_id:
-        raise HTTPException(status_code=403, detail="You can only cancel your active ride")
+        raise HTTPException(
+            status_code=403, detail="You can only cancel your active ride"
+        )
 
     ride = ride_crud.get(db, id=ride_id)
     if ride is None:

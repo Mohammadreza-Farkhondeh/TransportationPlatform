@@ -16,7 +16,6 @@ class RideStatus(Enum):
 
 
 class Ride(Base):
-
     id = Column(Integer, primary_key=True, index=True)
     passenger_id = Column(String, index=True)
     driver_id = Column(String, index=True)

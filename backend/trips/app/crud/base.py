@@ -35,7 +35,11 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         else:
             db_obj = db.query(self.model).filter(self.model.id == id).first()
             if db_obj:
-                redis_client.setex(redis_key, Settings.CACHE_EXPIRATION, json.dumps(jsonable_encoder(db_obj)))
+                redis_client.setex(
+                    redis_key,
+                    Settings.CACHE_EXPIRATION,
+                    json.dumps(jsonable_encoder(db_obj)),
+                )
                 return db_obj
             else:
                 return None
@@ -61,7 +65,7 @@ class CRUDBase(Generic[ModelType, CreateSchemaType, UpdateSchemaType]):
         db: Session,
         *,
         db_obj: ModelType,
-        obj_in: Union[UpdateSchemaType, Dict[str, Any]]
+        obj_in: Union[UpdateSchemaType, Dict[str, Any]],
     ) -> ModelType:
         obj_data = jsonable_encoder(db_obj)
         if isinstance(obj_in, dict):
