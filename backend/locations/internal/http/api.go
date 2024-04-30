@@ -93,6 +93,41 @@ func UpdateLocationHandler(w http.ResponseWriter, r *http.Request, db Database) 
 	w.WriteHeader(http.StatusOK)
 }
 
+// NearbyDriversHandler handles the request to retrieve nearby drivers based on longitude and latitude.
+func NearbyDriversHandler(w http.ResponseWriter, r *http.Request, db db.Database) {
+	// Parse the request parameters (latitude and longitude).
+	latitude := r.URL.Query().Get("latitude")
+	longitude := r.URL.Query().Get("longitude")
+
+	// Validate the request parameters.
+	if latitude == "" || longitude == "" {
+		http.Error(w, "Latitude and longitude are required parameters", http.StatusBadRequest)
+		return
+	}
+
+	// Convert latitude and longitude to appropriate data types (float64 or other).
+	// Perform any necessary validation or sanitization.
+
+	// Query the database for nearby drivers based on the provided latitude and longitude.
+	nearbyDrivers, err := db.GetNearbyDrivers(r.Context(), latitude, longitude)
+	if err != nil {
+		http.Error(w, "Failed to retrieve nearby drivers", http.StatusInternalServerError)
+		return
+	}
+
+	// Marshal the retrieved nearby drivers into JSON format.
+	response, err := json.Marshal(nearbyDrivers)
+	if err != nil {
+		http.Error(w, "Failed to encode response", http.StatusInternalServerError)
+		return
+	}
+
+	// Set the Content-Type header to indicate JSON format.
+	w.Header().Set("Content-Type", "application/json")
+	// Write the JSON response to the HTTP response writer.
+	w.Write(response)
+}
+
 // RunHTTPServer starts an HTTP server with handlers for location data.
 // It listens for incoming HTTP requests and routes them to the appropriate handlers based on the request method.
 // The server runs in a separate goroutine and can be shut down gracefully when the context is canceled.
@@ -109,6 +144,9 @@ func RunHTTPServer(ctx context.Context, addr string, kafkaProducer producer.Kafk
 		default:
 			http.Error(w, "Method not allowed", http.StatusMethodNotAllowed)
 		}
+	})
+	mux.HandleFunc("/nearby", func(w http.ResponseWriter, r *http.Request) {
+		NearbyDriversHandler(w, r, db)
 	})
 
 	server := http.Server{

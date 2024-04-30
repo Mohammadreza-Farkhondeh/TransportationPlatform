@@ -15,4 +15,7 @@ type Database interface {
 
 	// UpdateLocation updates a location update in the database.
 	UpdateLocation(ctx context.Context, id string, update models.LocationUpdate) error
+
+	// GetNearbyDrivers retrieves nearby drivers based on the provided latitude and longitude.
+	GetNearbyDrivers(ctx context.Context, latitude, longitude string) ([]models.Driver, error)
 }
